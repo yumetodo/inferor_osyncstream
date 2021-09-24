@@ -10,6 +10,9 @@ trim_trailing_whitespace = true
 [*.cpp, *.hpp, *.h, *.c]
 charset = utf-8-bom
 
+[*.yml]
+indent_size = 2
+
 [.gitignore]
 end_of_line = lf
 
