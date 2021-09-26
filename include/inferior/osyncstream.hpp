@@ -4,6 +4,9 @@
 #include <ostream>
 #include <streambuf>
 #include <string>
+
+#include "streambuf_locks.hpp"
+
 namespace inferior {
 template<class charT, class traits = std::char_traits<charT>>
 class basic_syncbuf : public std::basic_streambuf<charT, traits> {
