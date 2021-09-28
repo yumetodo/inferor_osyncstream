@@ -1,4 +1,4 @@
-﻿#ifndef INFERIOR_OSTNCSTREAM_HPP_
+#ifndef INFERIOR_OSTNCSTREAM_HPP_
 #define INFERIOR_OSTNCSTREAM_HPP_
 #include <iosfwd>
 #include <ostream>
@@ -23,9 +23,9 @@ private:
     using size_type = typename string_type::size_type;
 
 public:
-    explicit basic_syncbuf(streambuf_type* obuf = nullptr) : wrapped(obuf), buffer() {}
-    basic_syncbuf(basic_syncbuf&& o)
-        : wrapped(o.wrapped), emit_on_sync(o.emit_on_sync), buffer(std::move(o.buffer)) {}
+    explicit basic_syncbuf(streambuf_type* obuf = nullptr)
+        : wrapped(obuf), buffer(), lock(detail::streambuf_locks::get(obuf)) {}
+    basic_syncbuf(basic_syncbuf&&) = default;
     ~basic_syncbuf() noexcept {
         try {
             this->emit();
@@ -33,17 +33,7 @@ public:
             //
         }
     }
-    basic_syncbuf& operator=(basic_syncbuf&& o) {
-        this->wrapped = o.wrapped;
-        this->emit_on_sync = o.emit_on_sync;
-        this->buffer = std::move(o.buffer);
-    }
-    void swap(basic_syncbuf& o) {
-        using std::swap;
-        swap(wrapped, o.wrapped);
-        swap(emit_on_sync, o.emit_on_sync);
-        swap(buffer, o.buffer);
-    }
+    basic_syncbuf& operator=(basic_syncbuf&&) = default;
     bool emit() {
         struct scope_exit {
             string_type& buffer;
@@ -55,7 +45,8 @@ public:
                 this->needs_flush = false;
             }
         } ensure(this->buffer, this->needs_flush);
-        if (!this->wrapped) return false;
+        if (!this->wrapped || !lock) return false;
+        std::lock_guard<std::mutex> lk{lock};
         const auto re = this->wrapped->sputn(this->buffer.c_str(), this->buffer.size());
         if (0 < re && std::size_t(re) != this->buffer.size()) return false;
         if (this->needs_flush) {
@@ -98,15 +89,11 @@ private:
     bool emit_on_sync{};
     bool needs_flush{};
     string_type buffer;
+    detail::streambuf_lock_proxy lock;
 };
 
 using syncbuf = basic_syncbuf<char>;
 using wsyncbuf = basic_syncbuf<wchar_t>;
-
-template<class charT, class traits>
-void swap(basic_syncbuf<charT, traits>& l, basic_syncbuf<charT, traits>& r) {
-    l.swap(r);
-}
 
 template<class charT, class traits = std::char_traits<charT>>
 class basic_osyncstream : public std::basic_ostream<charT, traits> {
