@@ -32,7 +32,7 @@ private:
     streambuf_locks() = default;
 
 public:
-    streambuf_locks& init() {
+    static streambuf_locks& init() {
         static streambuf_locks locks;
         return locks;
     }
