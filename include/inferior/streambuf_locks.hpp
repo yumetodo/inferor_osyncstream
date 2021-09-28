@@ -26,6 +26,7 @@ public:
         this->locks = o.locks;
         o.streambuf = nullptr;
         o.locks = nullptr;
+        return *this;
     }
     ~streambuf_lock_proxy() noexcept { this->dispose(); }
     void swap(streambuf_lock_proxy& o) noexcept {
