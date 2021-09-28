@@ -29,7 +29,15 @@ project(basic_test)
 #
 set(basic_test_src
     "./test.cpp"
+    "./test_parallel.cpp"
 )
+
+#
+# find libraries and include
+#
+
+# find thread library
+find_package(Threads REQUIRED)
 
 if(INFERIOR_OSYNCSTREAM_ENABLE_COVERAGE)
     message("coverage enabled")
@@ -78,7 +86,9 @@ target_include_directories(basic_test PRIVATE "../include" "../iutest/include")
 # Link
 #
 if(WIN32)
-    target_link_libraries(basic_test ws2_32)
+    target_link_libraries(basic_test ws2_32 Threads::Threads)
+else()
+    target_link_libraries(basic_test Threads::Threads)
 endif()
 
 add_custom_target(run_test
