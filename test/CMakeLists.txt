@@ -30,6 +30,7 @@ project(basic_test)
 set(basic_test_src
     "./test.cpp"
     "./test_parallel.cpp"
+    "./test_streambuf_locks.cpp"
 )
 
 #
