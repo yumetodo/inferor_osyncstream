@@ -14,7 +14,7 @@ public:
         : lock(std::move(lock)), streambuf(streambuf), locks(locks) {}
     streambuf_lock_proxy(const streambuf_lock_proxy&) = delete;
     streambuf_lock_proxy(streambuf_lock_proxy&& o) noexcept
-        : lock(o.lock), streambuf(o.streambuf), locks(locks) {
+        : lock(o.lock), streambuf(o.streambuf), locks(o.locks) {
         o.streambuf = nullptr;
         o.locks = nullptr;
     }
