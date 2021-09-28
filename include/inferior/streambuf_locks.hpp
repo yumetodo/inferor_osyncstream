@@ -45,7 +45,7 @@ private:
     void* streambuf{};
     streambuf_locks* locks{};
 };
-void swap(streambuf_lock_proxy& l, streambuf_lock_proxy& r) noexcept { l.swap(r); }
+inline void swap(streambuf_lock_proxy& l, streambuf_lock_proxy& r) noexcept { l.swap(r); }
 
 class streambuf_locks {
 private:
