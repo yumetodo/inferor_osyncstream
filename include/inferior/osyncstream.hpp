@@ -1,4 +1,4 @@
-#ifndef INFERIOR_OSTNCSTREAM_HPP_
+﻿#ifndef INFERIOR_OSTNCSTREAM_HPP_
 #define INFERIOR_OSTNCSTREAM_HPP_
 #include <iosfwd>
 #include <ostream>
@@ -113,7 +113,9 @@ public:
     explicit basic_osyncstream(streambuf_type* obuf) : base{nullptr}, sb(obuf) { this->init(&sb); }
     explicit basic_osyncstream(std::basic_ostream<charT, traits>& os)
         : basic_osyncstream(os.rdbuf()) {}
-    basic_osyncstream(basic_osyncstream&&) = default;
+    basic_osyncstream(basic_osyncstream&& o) noexcept : sb(std::move(o.sb)) {
+        this->move(std::move(o));
+    }
     ~basic_osyncstream() = default;
     basic_osyncstream& operator=(basic_osyncstream&&) = default;
     void emit() { this->sb.emit(); }
