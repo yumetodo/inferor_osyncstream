@@ -37,7 +37,7 @@ public:
 
     bool operator!() const noexcept { return !this->lock; }
     explicit operator bool() const noexcept { return !(*this); }
-    operator std::mutex& () const noexcept { return *lock; }
+    operator std::mutex&() const noexcept { return *lock; }
 
 private:
     void dispose() noexcept;
