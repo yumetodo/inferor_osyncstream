@@ -48,6 +48,7 @@ public:
         }
         return {std::move(result), streambuf, this};
     }
+    static streambuf_lock_proxy get(void* streambuf) { return init().get_lock(streambuf); }
     void release_lock(std::shared_ptr<std::mutex>& sp, void* streambuf) {
         if (sp == nullptr && streambuf == nullptr) return;
         guard lx{mx};
