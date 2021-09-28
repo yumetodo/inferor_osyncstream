@@ -42,8 +42,8 @@ public:
 private:
     void dispose() noexcept;
     std::shared_ptr<std::mutex> lock;
-    void* streambuf;
-    streambuf_locks* locks;
+    void* streambuf{};
+    streambuf_locks* locks{};
 };
 void swap(streambuf_lock_proxy& l, streambuf_lock_proxy& r) noexcept { l.swap(r); }
 
