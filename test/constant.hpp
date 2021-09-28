@@ -38,6 +38,8 @@ namespace constant {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #endif
+INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(arikitari, "hello");
+INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(na_world, "na_world");
 INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(hello_world, "hello world");
 INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(arikitari_na_world, "arikitari na world");
 INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(arikitari_na_sekai, "arikitari na sekai");
@@ -47,6 +49,9 @@ INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(
     clear_for_reuse_feature_expected_1, "hello world\n");
 INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(
     clear_for_reuse_feature_expected_2, "hello world\narikitari na sekai\narikitari na world\n");
+INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(inner, "inner");
+INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(inner2, "inner2");
+INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(ostream_with_sharing_streambuf_expected, "inner2\ninner\n");
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
 #endif

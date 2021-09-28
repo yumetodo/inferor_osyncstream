@@ -1,4 +1,4 @@
-﻿#ifndef IUTEST_USE_MAIN
+#ifndef IUTEST_USE_MAIN
 #define IUTEST_USE_MAIN
 #endif
 #include <inferior/osyncstream.hpp>
@@ -33,4 +33,47 @@ IUTEST_TYPED_TEST(Basic, ClearForReuseFeature) {
     }
     outer << constant::arikitari_na_world_lf<TypeParam>();
     IUTEST_ASSERT_EQ(constant::clear_for_reuse_feature_expected_2<TypeParam>(), outer.str());
+}
+IUTEST_TYPED_TEST(Basic, NestedBufferedStream) {
+    std::basic_ostringstream<TypeParam> outs{};
+    {
+        inferior::basic_osyncstream<TypeParam> outer{outs};
+        outer << constant::arikitari<TypeParam>();
+        {
+            inferior::basic_osyncstream<TypeParam> inner{outer.get_wrapped()};
+            inner << constant::hello_world_lf<TypeParam>();
+            IUTEST_ASSERT(outs.str().empty());
+            inner.emit();
+            inner << constant::arikitari_na_sekai_lf<TypeParam>() << std::flush;
+        }
+        outer << constant::na_world_lf<TypeParam>();
+    }
+    IUTEST_ASSERT_EQ(constant::clear_for_reuse_feature_expected_2<TypeParam>(), outs.str());
+}
+IUTEST_TYPED_TEST(Basic, OStreamWithSharingStreambuf) {
+    std::basic_ostringstream<TypeParam> out{};
+    std::basic_ostream<TypeParam> out2{out.rdbuf()};
+    using osyncstream = inferior::basic_osyncstream<TypeParam>;
+    {
+        osyncstream inner{out};
+        osyncstream inner2{out2};
+        inner << constant::inner<TypeParam>() << std::endl;
+        inner2 << constant::inner2_lf<TypeParam>();
+    }
+    IUTEST_ASSERT_EQ(constant::ostream_with_sharing_streambuf_expected<TypeParam>(), out.str());
+}
+IUTEST_TYPED_TEST(Basic, MoveCtor) {
+    auto const sz = inferior::detail::streambuf_locks::init().size();
+    using osyncstream = inferior::basic_osyncstream<TypeParam>;
+    std::basic_ostringstream<TypeParam> out{};
+    {
+        osyncstream os{out};
+        os << constant::arikitari<TypeParam>();
+        {
+            osyncstream os1{std::move(os)};
+            os1 << constant::na_world_lf<TypeParam>();
+        }
+        IUTEST_ASSERT_EQ(constant::arikitari_na_world_lf<TypeParam>(), out.str());
+    }
+    IUTEST_ASSERT_EQ(sz, inferior::detail::streambuf_locks::init().size());
 }
