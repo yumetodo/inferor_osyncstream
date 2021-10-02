@@ -40,7 +40,19 @@ public:
             //
         }
     }
-    basic_syncbuf& operator=(basic_syncbuf&&) = default;
+    basic_syncbuf& operator=(basic_syncbuf&& o) noexcept {
+        if (this == &o) return *this;
+        try {
+            this->emit();
+        } catch (...) {
+        }
+        this->wrapped = std::exchange(o.wrapped, nullptr);
+        this->emit_on_sync = o.emit_on_sync;
+        this->needs_flush = o.needs_flush;
+        this->buffer = std::move(o.buffer);
+        this->lock = std::move(o.lock);
+        return *this;
+    }
     bool emit() {
         struct scope_exit {
             string_type& buffer;
@@ -126,12 +138,13 @@ public:
     }
     ~basic_osyncstream() = default;
     basic_osyncstream& operator=(basic_osyncstream&& o) {
-        base::operator=(std::move(*static_cast<base>(&o)));
+        base::operator=(std::move(*static_cast<base*>(&o)));
         this->sb = std::move(o.sb);
+        return *this;
     }
     void emit() { this->sb.emit(); }
     streambuf_type* get_wrapped() const noexcept { return this->sb.get_wrapped(); }
-    syncbuf_type* rdbuf() const noexcept { return &sb; }
+    syncbuf_type* rdbuf() const noexcept { return const_cast<syncbuf_type*>(&sb); }
 
 private:
     syncbuf_type sb;  // exposition on
