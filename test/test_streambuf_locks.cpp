@@ -24,5 +24,12 @@ IUTEST(StreambufLocks, LockMapSimple) {
 }
 
 IUTEST(StreambufLocks, LockMapWithNullReturnsNull){
-
+    auto& lock = streambuf_locks::init();
+    const auto sz = lock.size();
+    {
+        auto mx = streambuf_locks::get(nullptr);
+        IUTEST_ASSERT(!mx);
+        lock.release_lock(mx.unsafe_get_lock_ref(), nullptr);
+    }
+    IUTEST_ASSERT_EQ(0 + sz, lock.size());
 }
