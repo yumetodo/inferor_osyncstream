@@ -50,4 +50,4 @@ _deps
 
 # Other
 build**/*
-.vscode/settings.json
+.vscode/*
