@@ -63,7 +63,8 @@ IUTEST_TYPED_TEST(Basic, OStreamWithSharingStreambuf) {
     IUTEST_ASSERT_EQ(constant::ostream_with_sharing_streambuf_expected<TypeParam>(), out.str());
 }
 IUTEST_TYPED_TEST(Basic, MoveCtor) {
-    auto const sz = inferior::detail::streambuf_locks::init().size();
+    auto& locks = inferior::detail::streambuf_locks::init();
+    auto const sz = locks.size();
     using osyncstream = inferior::basic_osyncstream<TypeParam>;
     std::basic_ostringstream<TypeParam> out{};
     {
@@ -75,5 +76,5 @@ IUTEST_TYPED_TEST(Basic, MoveCtor) {
         }
         IUTEST_ASSERT_EQ(constant::arikitari_na_world_lf<TypeParam>(), out.str());
     }
-    IUTEST_ASSERT_EQ(sz, inferior::detail::streambuf_locks::init().size());
+    IUTEST_ASSERT_EQ(sz, locks.size());
 }
