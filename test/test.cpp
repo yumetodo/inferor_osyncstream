@@ -73,8 +73,10 @@ IUTEST_TYPED_TEST(Basic, MoveCtor) {
         {
             osyncstream os1{std::move(os)};
             os1 << constant::na_world_lf<TypeParam>();
+            IUTEST_ASSERT_EQ(sz + 1, locks.size());
         }
         IUTEST_ASSERT_EQ(constant::arikitari_na_world_lf<TypeParam>(), out.str());
+        IUTEST_ASSERT_EQ(sz, locks.size());
     }
     IUTEST_ASSERT_EQ(sz, locks.size());
 }
