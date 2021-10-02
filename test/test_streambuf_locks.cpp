@@ -10,6 +10,7 @@ IUTEST(StreambufLocks, LockMapSimple) {
     std::ostringstream out{};
     {
         auto mx = streambuf_locks::get(out.rdbuf());
+        IUTEST_ASSERT(mx);
         {
             auto my = streambuf_locks::get(out.rdbuf());
             IUTEST_ASSERT_EQ(mx, my);
