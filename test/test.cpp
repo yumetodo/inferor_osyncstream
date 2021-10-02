@@ -116,3 +116,31 @@ IUTEST_TYPED_TEST(Basic, MoveAssignOp) {
     }
     IUTEST_ASSERT_EQ(sz, locks.size());
 }
+IUTEST_TYPED_TEST(Basic, swap) {
+    using osyncstream = inferior::basic_osyncstream<TypeParam>;
+    using ostringstream = std::basic_ostringstream<TypeParam>;
+
+    auto& locks = inferior::detail::streambuf_locks::init();
+    auto const sz = locks.size();
+    ostringstream out{};
+    ostringstream dummy{};
+    {
+        osyncstream os{out};
+        os << constant::hello_world_lf<TypeParam>();
+        {
+            osyncstream os1{dummy};
+            os1 << constant::arikitari_lf<TypeParam>();
+            IUTEST_ASSERT_EQ(constant::arikitari_lf<TypeParam>(), str(os1));
+            using std::swap;
+            swap(os1, os);
+            IUTEST_ASSERT_EQ(constant::hello_world_lf<TypeParam>(), str(os1));
+            os1 << constant::arikitari_na_world_lf<TypeParam>();
+            IUTEST_ASSERT_EQ(sz + 2, locks.size());
+        }
+        os.emit();
+        IUTEST_ASSERT_EQ(constant::arikitari_lf<TypeParam>(), dummy.str());
+        IUTEST_ASSERT_EQ(constant::inner_outer_expected<TypeParam>(), out.str());
+        IUTEST_ASSERT_EQ(sz + 1, locks.size());
+    }
+    IUTEST_ASSERT_EQ(sz, locks.size());
+}
