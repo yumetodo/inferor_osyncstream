@@ -25,7 +25,14 @@ private:
 public:
     explicit basic_syncbuf(streambuf_type* obuf = nullptr)
         : wrapped(obuf), buffer(), lock(detail::streambuf_locks::get(obuf)) {}
-    basic_syncbuf(basic_syncbuf&&) = default;
+    basic_syncbuf(basic_syncbuf&& o)
+        : wrapped(std::move(o.wrapped)),
+          emit_on_sync(o.emit_on_sync),
+          needs_flush(o.needs_flush),
+          buffer(std::move(o.buffer)),
+          lock(std::move(o.lock)) {
+        o.wrapped = nullptr;
+    }
     ~basic_syncbuf() noexcept {
         try {
             this->emit();
@@ -110,12 +117,18 @@ private:
     using base = std::basic_ostream<charT, traits>;
 
 public:
-    explicit basic_osyncstream(streambuf_type* obuf) : base{nullptr}, sb(obuf) { this->init(&sb); }
+    explicit basic_osyncstream(streambuf_type* obuf) : base{nullptr}, sb(obuf) { base::init(&sb); }
     explicit basic_osyncstream(std::basic_ostream<charT, traits>& os)
         : basic_osyncstream(os.rdbuf()) {}
-    basic_osyncstream(basic_osyncstream&& o) noexcept : base(std::move(o)), sb(std::move(o.sb)) {}
+    basic_osyncstream(basic_osyncstream&& o) noexcept
+        : base(std::move(*static_cast<base*>(&o))), sb(std::move(o.sb)) {
+        base::init(&sb);
+    }
     ~basic_osyncstream() = default;
-    basic_osyncstream& operator=(basic_osyncstream&&) = default;
+    basic_osyncstream& operator=(basic_osyncstream&& o) {
+        base::operator=(std::move(*static_cast<base>(&o)));
+        this->sb = std::move(o.sb);
+    }
     void emit() { this->sb.emit(); }
     streambuf_type* get_wrapped() const noexcept { return this->sb.get_wrapped(); }
     syncbuf_type* rdbuf() const noexcept { return &sb; }
