@@ -37,7 +37,7 @@ public:
     }
 
     bool operator!() const noexcept { return !this->lock; }
-    explicit operator bool() const noexcept { return !(*this); }
+    explicit operator bool() const noexcept { return !!(*this); }
     operator std::mutex&() const noexcept { return *lock; }
     std::shared_ptr<std::mutex>& unsafe_get_lock_ref() noexcept { return this->lock; }
 
