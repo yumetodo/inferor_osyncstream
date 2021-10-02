@@ -80,3 +80,39 @@ IUTEST_TYPED_TEST(Basic, MoveCtor) {
     }
     IUTEST_ASSERT_EQ(sz, locks.size());
 }
+
+IUTEST_MAKE_PEEP(std::string inferior::syncbuf::*, inferior::syncbuf, buffer);
+IUTEST_MAKE_PEEP(std::wstring inferior::wsyncbuf::*, inferior::wsyncbuf, buffer);
+template<typename CharT>
+std::basic_string<CharT> str(const inferior::basic_osyncstream<CharT>& ss) {
+    const auto& buf = *ss.rdbuf();
+    return IUTEST_PEEP_GET(buf, inferior::basic_syncbuf<CharT>, buffer);
+}
+
+IUTEST_TYPED_TEST(Basic, MoveAssignOp) {
+    using osyncstream = inferior::basic_osyncstream<TypeParam>;
+    using ostringstream = std::basic_ostringstream<TypeParam>;
+
+    auto& locks = inferior::detail::streambuf_locks::init();
+    auto const sz = locks.size();
+    ostringstream out{};
+    ostringstream dummy{};
+    {
+        osyncstream os{out};
+        os << constant::hello_world_lf<TypeParam>();
+        {
+            osyncstream os1{dummy};
+            os1 << constant::arikitari_lf<TypeParam>();
+            IUTEST_ASSERT_EQ(constant::arikitari_lf<TypeParam>(), str(os1));
+            IUTEST_ASSERT_EQ(sz + 2, locks.size());
+            os1 = std::move(os);
+            IUTEST_ASSERT_EQ(sz + 1, locks.size());
+            IUTEST_ASSERT_EQ(constant::hello_world_lf<TypeParam>(), str(os1));
+            os1 << constant::arikitari_na_world_lf<TypeParam>();
+        }
+        IUTEST_ASSERT_EQ(constant::arikitari_lf<TypeParam>(), dummy.str());
+        IUTEST_ASSERT_EQ(constant::inner_outer_expected<TypeParam>(), out.str());
+        IUTEST_ASSERT_EQ(sz, locks.size());
+    }
+    IUTEST_ASSERT_EQ(sz, locks.size());
+}
