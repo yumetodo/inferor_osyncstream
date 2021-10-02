@@ -38,8 +38,8 @@ namespace constant {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #endif
-INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(arikitari, "hello");
-INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(na_world, "na_world");
+INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(arikitari, "arikitari");
+INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(na_world, " na world");
 INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(hello_world, "hello world");
 INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(arikitari_na_world, "arikitari na world");
 INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(arikitari_na_sekai, "arikitari na sekai");
