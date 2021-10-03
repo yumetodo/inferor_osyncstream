@@ -1,5 +1,6 @@
 ﻿#include <inferior/osyncstream.hpp>
 #include <iostream>
+#include <thread>
 
 void thread1(int value) {
     // 下記行の処理結果がアトミックにストリーム出力される
@@ -17,6 +18,8 @@ void thread2(int value) {
     // osyncstreamデストラクタにより暗黙にemitが呼び出される
 }
 int main() {
-    thread1(4);
-    thread2(3);
+    std::thread th1([] { thread1(4); });
+    std::thread th2([] { thread2(3); });
+    th1.join();
+    th2.join();
 }
