@@ -51,7 +51,18 @@ INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(
     clear_for_reuse_feature_expected_2, "hello world\narikitari na sekai\narikitari na world\n");
 INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(inner, "inner");
 INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(inner2, "inner2");
-INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(ostream_with_sharing_streambuf_expected, "inner2\ninner\n");
+INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(
+    ostream_with_sharing_streambuf_expected, "inner2\ninner\n");
+INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(within, "within ");
+INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(fuji, "fuji");
+INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(manipulators_expected1, "hello world\nwithin ");
+INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(
+    manipulators_expected2, "hello world\nwithin arikitari na world\narikitari na sekai\n");
+INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(
+    manipulators_expected3, "hello world\nwithin arikitari na world\narikitari na sekai\nfuji\n");
+INFERIOR_OSYNCSTREAM_TEST_CONSTANT_REGISTER_STRING(
+    manipulators_expected4, "hello world\narikitari na sekai\n");
+
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
 #endif

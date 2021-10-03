@@ -144,3 +144,30 @@ IUTEST_TYPED_TEST(Basic, swap) {
     }
     IUTEST_ASSERT_EQ(sz, locks.size());
 }
+IUTEST_TYPED_TEST(Basic, manipulators) {
+    using osyncstream = inferior::basic_osyncstream<TypeParam>;
+    std::basic_ostringstream<TypeParam> outer{};
+    {
+        osyncstream inner{outer};
+        inner << inferior::emit_on_flush;
+        inner << constant::hello_world<TypeParam>();
+        inner << std::endl;
+        outer << constant::within<TypeParam>();
+        inner << inferior::no_emit_on_flush;
+        inner << constant::arikitari_na_world<TypeParam>() << std::endl;
+        IUTEST_ASSERT_EQ(constant::manipulators_expected1<TypeParam>(), outer.str());
+        inner << constant::arikitari_na_sekai_lf<TypeParam>() << inferior::flush_emit;
+        IUTEST_ASSERT_EQ(constant::manipulators_expected2<TypeParam>(), outer.str());
+    }
+    outer << constant::fuji_lf<TypeParam>();
+    IUTEST_ASSERT_EQ(constant::manipulators_expected3<TypeParam>(), outer.str());
+}
+IUTEST_TYPED_TEST(Basic, ManipulatorsForRegularOStream) {
+    std::basic_ostringstream<TypeParam> outer{};
+    outer << constant::hello_world<TypeParam>() << inferior::emit_on_flush << std::endl;
+    IUTEST_ASSERT_EQ(constant::hello_world_lf<TypeParam>(), outer.str());
+    outer << constant::arikitari_na_sekai<TypeParam>() << inferior::no_emit_on_flush << std::endl;
+    IUTEST_ASSERT_EQ(constant::manipulators_expected4<TypeParam>(), outer.str());
+    outer << constant::arikitari_na_world_lf<TypeParam>() << inferior::flush_emit;
+    IUTEST_ASSERT_EQ(constant::clear_for_reuse_feature_expected_2<TypeParam>(), outer.str());
+}
