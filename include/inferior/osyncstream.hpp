@@ -150,6 +150,31 @@ private:
     syncbuf_type sb;  // exposition on
 };
 
+template<class charT, class traits = std::char_traits<charT>>
+std::basic_ostream<charT, traits>& emit_on_flush(std::basic_ostream<charT, traits>& out) {
+    if (auto syncbuffer = dynamic_cast<basic_syncbuf<charT, traits>*>(out.rdbuf())) {
+        syncbuffer->set_emit_on_sync(true);
+    }
+    return out;
+}
+template<class charT, class traits = std::char_traits<charT>>
+std::basic_ostream<charT, traits>& no_emit_on_flush(std::basic_ostream<charT, traits>& out) {
+    if (auto syncbuffer = dynamic_cast<basic_syncbuf<charT, traits>*>(out.rdbuf())) {
+        syncbuffer->set_emit_on_sync(false);
+    }
+    return out;
+}
+template<class charT, class traits = std::char_traits<charT>>
+std::basic_ostream<charT, traits>& flush_emit(std::basic_ostream<charT, traits>& out) {
+    out.flush();
+    if (auto syncbuffer = dynamic_cast<basic_syncbuf<charT, traits>*>(out.rdbuf())) {
+        if (!syncbuffer->emit()) {
+            out.setstate(std::ios_base::badbit);
+        }
+    }
+    return out;
+}
+
 using osyncstream = basic_osyncstream<char>;
 using wosyncstream = basic_osyncstream<wchar_t>;
 }  // namespace inferior
