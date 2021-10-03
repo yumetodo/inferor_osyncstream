@@ -22,10 +22,18 @@ set(sample_src
 )
 
 #
+# find libraries and include
+#
+
+# find thread library
+find_package(Threads REQUIRED)
+
+#
 # Compile
 #
 add_executable(sample ${sample_src})
 target_include_directories(sample PRIVATE "../include")
+target_link_libraries(sample Threads::Threads)
 
 #
 # add Run task
